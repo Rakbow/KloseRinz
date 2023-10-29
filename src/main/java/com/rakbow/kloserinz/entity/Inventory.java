@@ -22,7 +22,7 @@ public class Inventory {
     private Long nodeId;
     private String nodeCode;
     private String nodeName;
-    private double amount;
+    private int amount;
     private double minimumSafeStock;
     private Timestamp addedTime;
     private Timestamp editedTime;

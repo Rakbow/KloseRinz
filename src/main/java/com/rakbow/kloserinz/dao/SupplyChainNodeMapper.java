@@ -1,7 +1,7 @@
 package com.rakbow.kloserinz.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.rakbow.kloserinz.entity.Warehouse;
+import com.rakbow.kloserinz.entity.SupplyChainNode;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,5 +11,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @Description:
  */
 @Mapper
-public interface WarehouseMapper extends BaseMapper<Warehouse> {
+public interface SupplyChainNodeMapper extends BaseMapper<SupplyChainNode> {
 }

@@ -13,8 +13,8 @@ import java.sql.Timestamp;
  * @Description:
  */
 @Data
-@TableName("warehouse")
-public class Warehouse {
+@TableName("supply_chain_node")
+public class SupplyChainNode {
 
     private Long id;
     private String code;
@@ -23,7 +23,7 @@ public class Warehouse {
     private Timestamp editedTime;
     private int status;
 
-    public Warehouse() {
+    public SupplyChainNode() {
         id = 0L;
         code = "";
         name = "";

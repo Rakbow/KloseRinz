@@ -13,4 +13,7 @@ public class ApiInfo {
     public static final String SKU_CODE_DEFICIENCY = "商品编码缺失";
     public static final String SKU_CATEGORY_DEFICIENCY = "商品分类缺失";
 
+
+    public static final String META_DATA_LOAD_SUCCESS = "数据加载成功: MetaData";
+    public static final String COMMON_EXCEPTION = "服务器发生异常: " ;
 }

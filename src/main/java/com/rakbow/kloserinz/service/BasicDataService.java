@@ -3,18 +3,22 @@ package com.rakbow.kloserinz.service;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rakbow.kloserinz.dao.InventoryMapper;
 import com.rakbow.kloserinz.dao.SKUCategoryMapper;
 import com.rakbow.kloserinz.dao.SKUMapper;
-import com.rakbow.kloserinz.dao.WarehouseMapper;
-import com.rakbow.kloserinz.data.QueryParams;
+import com.rakbow.kloserinz.dao.SupplyChainNodeMapper;
+import com.rakbow.kloserinz.data.*;
 import com.rakbow.kloserinz.entity.Inventory;
 import com.rakbow.kloserinz.entity.SKU;
-import com.rakbow.kloserinz.entity.Warehouse;
+import com.rakbow.kloserinz.entity.SKUCategory;
+import com.rakbow.kloserinz.entity.SupplyChainNode;
 import com.rakbow.kloserinz.logic.BasicLogic;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +36,8 @@ import java.util.List;
 public class BasicDataService {
 
     //region Inject Bean
+    private static final Logger logger = LoggerFactory.getLogger(BasicDataService.class);
+
     @Resource
     private SKUMapper skuMapper;
     @Resource
@@ -39,31 +45,41 @@ public class BasicDataService {
     @Resource
     private InventoryMapper inventoryMapper;
     @Resource
-    private WarehouseMapper warehouseMapper;
+    private SupplyChainNodeMapper supplyChainNodeMapper;
     //endregion
 
     //region SKU search
 
     //有条件分页查询SKU
     @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class, readOnly = true)
-    public List<SKU> getSKU(QueryParams param) {
-        //分页对象
-        Page<SKU> page = new Page<>(param.page, param.size);
-        // 创建查询条件
-        QueryWrapper<SKU> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", 1)
-                .like("code", param.getStrFilter("code"))
-                .like("nameZh", param.getStrFilter("nameZh"))
-                .like("nameEn", param.getStrFilter("nameEn"))
-                .in("categoryId", param.getArrFilter("categoryIds", Long.class));
-        if (!StringUtils.isBlank(param.sortField)) {
-            if(param.sortOrder == 1) {
-                wrapper.orderByAsc(param.sortField);
-            }else {
-                wrapper.orderByDesc(param.sortField);
+    public ApiResult getSKU(QueryParams param) {
+        ApiResult res = new ApiResult();
+        try {
+            //筛选条件
+            QueryWrapper<SKU> wrapper = new QueryWrapper<SKU>()
+                    .eq("status", 1)
+                    .like("code", param.getStrFilter("code"))
+                    .like("name_zh", param.getStrFilter("nameZh"))
+                    .like("name_en", param.getStrFilter("nameEn"));
+            List<Long> categoryIds = param.getArrFilter("categoryIds", Long.class);
+            if (categoryIds != null && !categoryIds.isEmpty()) {
+                wrapper.in("category_id", categoryIds);
             }
+            if (!StringUtils.isBlank(param.sortField)) {
+                if (param.sortOrder == 1) {
+                    wrapper.orderByAsc(param.sortField);
+                } else {
+                    wrapper.orderByDesc(param.sortField);
+                }
+            }
+            //筛选结果
+            IPage<SKU> skuSet = skuMapper.selectPage(new Page<>(param.page, param.size), wrapper);
+            res.data = skuSet.getRecords();
+            res.total = skuSet.getTotal();
+        } catch (Exception e) {
+            res.setErrorMessage(e);
         }
-        return skuMapper.selectList(wrapper);
+        return res;
     }
 
     //新增SKU（单条）
@@ -74,24 +90,24 @@ public class BasicDataService {
 
         //数据检测
         String checkError = BasicLogic.checkSKU(skuJson);
-        if(!StringUtils.isBlank(checkError))
+        if (!StringUtils.isBlank(checkError))
             throw new Exception(checkError);
         //组装数据
         SKU sku = JSON.to(SKU.class, skuJson);
 
         //获取对应仓库
-        QueryWrapper<Warehouse> nodeWrapper = new QueryWrapper<>();
+        QueryWrapper<SupplyChainNode> nodeWrapper = new QueryWrapper<>();
         nodeWrapper.in("id", json.getJSONArray("nodes").toJavaList(Integer.class));
-        List<Warehouse> nodes = warehouseMapper.selectList(nodeWrapper);
+        List<SupplyChainNode> nodes = supplyChainNodeMapper.selectList(nodeWrapper);
 
         //新增SKU
         long skuId = skuMapper.insert(sku);
         sku.setId(skuId);
 
         //生成库存数据
-        List<Inventory> addInvSet = BasicLogic.generateInventory(nodes, sku, json.getDouble("amount"), json.getDouble("minimumSafeStock"));
+        List<Inventory> addInvSet = BasicLogic.generateInventory(nodes, sku, json.getIntValue("amount"), json.getDouble("minimumSafeStock"));
         //执行新增库存数据
-        for(Inventory inv : addInvSet) {
+        for (Inventory inv : addInvSet) {
             inventoryMapper.insert(inv);
         }
     }
@@ -104,4 +120,24 @@ public class BasicDataService {
 
     //endregion
 
+    //region init data
+
+    //加载MetaData
+
+    public void loadMetaData() {
+        //获取所有sku分类数据和仓库数据
+        List<SKUCategory> skuCategories = skuCategoryMapper.selectList(new QueryWrapper<SKUCategory>().eq("status", 1));
+        List<SupplyChainNode> SupplyChainNodes = supplyChainNodeMapper.selectList(new QueryWrapper<SupplyChainNode>().eq("status", 1));
+        MetaData.skuCategorySet = new ArrayList<>();
+        MetaData.supplyChainNodeSet = new ArrayList<>();
+        skuCategories.forEach(category -> {
+            MetaData.skuCategorySet.add(new Attribute<>(category.getName(), category.getId()));
+        });
+        SupplyChainNodes.forEach(node -> {
+            MetaData.supplyChainNodeSet.add(new Attribute<>(node.getName(), node.getId()));
+        });
+        logger.info(ApiInfo.META_DATA_LOAD_SUCCESS);
+    }
+
+    //endregion
 }

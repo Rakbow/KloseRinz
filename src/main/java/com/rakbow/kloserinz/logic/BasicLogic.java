@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.rakbow.kloserinz.data.ApiInfo;
 import com.rakbow.kloserinz.entity.Inventory;
 import com.rakbow.kloserinz.entity.SKU;
-import com.rakbow.kloserinz.entity.Warehouse;
+import com.rakbow.kloserinz.entity.SupplyChainNode;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -32,10 +32,10 @@ public class BasicLogic {
     }
 
     //生成库存数据
-    public static List<Inventory> generateInventory(List<Warehouse> nodes, SKU sku, double amount, double minimumSafeStock) {
+    public static List<Inventory> generateInventory(List<SupplyChainNode> nodes, SKU sku, int amount, double minimumSafeStock) {
         List<Inventory> inventories = new ArrayList<>();
 
-        for (Warehouse node : nodes) {
+        for (SupplyChainNode node : nodes) {
             Inventory inv = new Inventory();
             inv.setSkuId(sku.getId());
             inv.setSkuName(sku.getNameZh());

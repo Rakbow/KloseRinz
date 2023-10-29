@@ -24,7 +24,7 @@ public class SKU {
     private long categoryId; //产品分类id
     private String categoryName; //产品分类名
     private String spec; //规格
-    private double minimumSafeStock; //最小安全库存
+    private String unit; //单位
     private double priceCn; //国内售价(RMB)
     private double priceWw; //海外售价(USD)
     private String remark; //备注
@@ -42,7 +42,7 @@ public class SKU {
         categoryId = 0;
         categoryName = "";
         spec = "";
-        minimumSafeStock = 0;
+        unit = "";
         priceCn = 0;
         priceWw = 0;
         remark= "";
