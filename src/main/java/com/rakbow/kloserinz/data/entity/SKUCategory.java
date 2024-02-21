@@ -1,13 +1,11 @@
-package com.rakbow.kloserinz.entity;
+package com.rakbow.kloserinz.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
- * @Project_name: KloseRinz
- * @Author: Rakbow
- * @Create: 2023-10-17 1:40
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-17 1:40
  */
 @Data
 @TableName("sku_category")

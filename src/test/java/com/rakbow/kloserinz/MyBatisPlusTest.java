@@ -1,7 +1,6 @@
 package com.rakbow.kloserinz;
 
-import com.rakbow.kloserinz.data.ApiResult;
-import com.rakbow.kloserinz.entity.SKU;
+import com.rakbow.kloserinz.data.entity.SKU;
 import com.rakbow.kloserinz.service.TestService;
 import jakarta.annotation.Resource;
 import org.junit.Test;
@@ -11,10 +10,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * @Project_name: KloseRinz
- * @Author: Rakbow
- * @Create: 2023-10-17 0:30
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-17 0:30
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -32,8 +29,8 @@ public class MyBatisPlusTest {
         sku.setNameEn("test product 1");
         sku.setCategoryId(0);
         sku.setCategoryName("默认");
-        sku.setPriceCn(10);
-        sku.setPriceWw(10);
+        sku.setSellingPriceCn(10);
+        sku.setSellingPriceWw(10);
         testService.addSKU(sku);
     }
 

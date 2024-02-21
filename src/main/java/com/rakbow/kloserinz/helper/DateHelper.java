@@ -10,10 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
- * @Project_name: KloseRinz
- * @Author: Rakbow
- * @Create: 2023-10-16 22:37
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-16 22:37
  */
 public class DateHelper {
 

@@ -1,4 +1,4 @@
-package com.rakbow.kloserinz.entity;
+package com.rakbow.kloserinz.data.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.rakbow.kloserinz.helper.DateHelper;
@@ -7,10 +7,8 @@ import lombok.Data;
 import java.sql.Timestamp;
 
 /**
- * @Project_name: KloseRinz
- * @Author: Rakbow
- * @Create: 2023-10-17 1:56
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-17 1:56
  */
 @Data
 @TableName("supply_chain_node")

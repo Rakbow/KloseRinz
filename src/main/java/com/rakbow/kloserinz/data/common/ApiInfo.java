@@ -1,10 +1,8 @@
-package com.rakbow.kloserinz.data;
+package com.rakbow.kloserinz.data.common;
 
 /**
- * @Project_name: KloseRinz
- * @Author: Rakbow
- * @Create: 2023-10-21 3:38
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-21 3:38
  */
 public class ApiInfo {
 

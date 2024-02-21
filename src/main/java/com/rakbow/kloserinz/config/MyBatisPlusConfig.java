@@ -7,10 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Project_name: KloseRinz
- * @Author: Rakbow
- * @Create: 2023-10-28 6:27
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-28 6:27
  */
 @Configuration
 public class MyBatisPlusConfig {

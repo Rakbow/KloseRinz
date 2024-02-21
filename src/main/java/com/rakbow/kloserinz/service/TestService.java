@@ -2,7 +2,7 @@ package com.rakbow.kloserinz.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.rakbow.kloserinz.dao.SKUMapper;
-import com.rakbow.kloserinz.entity.SKU;
+import com.rakbow.kloserinz.data.entity.SKU;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -11,10 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * @Project_name: KloseRinz
- * @Author: Rakbow
- * @Create: 2023-10-16 22:13
- * @Description:
+ * @author Rakbow
+ * @since 2023-10-16 22:13
  */
 @Service
 public class TestService {

@@ -1,8 +1,8 @@
 package com.rakbow.kloserinz.controller.advice;
 
-import com.alibaba.fastjson2.JSON;
-import com.rakbow.kloserinz.data.ApiInfo;
-import com.rakbow.kloserinz.data.ApiResult;
+import com.rakbow.kloserinz.data.common.ApiInfo;
+import com.rakbow.kloserinz.data.common.ApiResult;
+import com.rakbow.kloserinz.util.JsonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -15,21 +15,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * @Project_name: KloseRinz
- * @Author: Rakbow
- * @Create: 2022-09-12 17:31
- * @Description: 记录异常到日志中
+ * @author Rakbow
+ * @since 2022-09-12 17:31 记录异常到日志中
  */
 @ControllerAdvice(annotations = Controller.class)
 public class ExceptionAdvice {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExceptionAdvice.class);
+    private static final Logger log = LoggerFactory.getLogger(ExceptionAdvice.class);
 
     @ExceptionHandler({Exception.class})
     public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.error(ApiInfo.COMMON_EXCEPTION + e.getMessage());
+        log.error(ApiInfo.COMMON_EXCEPTION + e.getMessage());
         for (StackTraceElement element : e.getStackTrace()) {
-            logger.error(element.toString());
+            log.error(element.toString());
         }
 
         String xRequestedWith = request.getHeader("x-requested-with");
@@ -37,7 +35,7 @@ public class ExceptionAdvice {
         if ("XMLHttpRequest".equals(xRequestedWith)) {
             response.setContentType("application/plain;charset=utf-8");
             PrintWriter writer = response.getWriter();
-            writer.write(JSON.toJSONString(new ApiResult(0, e.getMessage())));
+            writer.write(JsonUtil.toJson(new ApiResult(0, e.getMessage())));
         //为普通请求
         } else {
             response.sendRedirect(request.getContextPath() + "/error");
